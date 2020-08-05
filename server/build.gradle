@@ -121,17 +121,19 @@ artifacts {
     archives tomcatListenerJar
 }
 
-task migrationJar(type: Jar) {
+task migrationJarForManifest(type: Jar) {
     manifest {
-        attributes 'Main-Class': "org.cloudfoundry.identity.uaa.db.FlywayMigrationRunner",
+        attributes(
+                'Main-Class': "org.cloudfoundry.identity.uaa.db.FlywayMigrationRunner",
                 'Class-Path': configurations.runtime.files.collect { "lib/$it.name" }.join(' ')
+        )
     }
 }
 
 shadowJar {
     baseName("UAA-FlywayMigrationRunner")
     manifest {
-        inheritFrom project.tasks.migrationJar.manifest
+        inheritFrom(project.tasks.migrationJarForManifest.manifest)
     }
     mergeServiceFiles('META-INF/spring.*')
 }
